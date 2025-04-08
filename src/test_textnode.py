@@ -27,7 +27,46 @@ class TestTextNode(unittest.TestCase):
             self.assertEqual(response.status_code, 200, f"URL {node.url} is not reachable")
         else:
             self.fail("URL is None or empty")
+    
+    def test_repr(self):
+        node = TextNode("Sample text", TextType.BOLD, "https://example.com")
+        self.assertEqual(repr(node), "TextNode(Sample text, bold, https://example.com)")
 
+    def test_neq_different_urls(self):
+        node1 = TextNode("Sample text", TextType.LINK, "https://example1.com")
+        node2 = TextNode("Sample text", TextType.LINK, "https://example2.com")
+        self.assertNotEqual(node1, node2)
+
+    def test_empty_url(self):
+        node = TextNode("Sample text", TextType.LINK, None)
+        self.assertIsNone(node.url)
+
+    def test_neq_different_text_types(self):
+        node1 = TextNode("Sample text", TextType.BOLD)
+        node2 = TextNode("Sample text", TextType.ITALIC)
+        self.assertNotEqual(node1, node2)
+
+    def test_default_url(self):
+        node = TextNode("Sample text", TextType.TEXT)
+        self.assertIsNone(node.url)
+
+    def test_empty_text(self):
+        node = TextNode("", TextType.TEXT)
+        self.assertEqual(node.text, "")
+
+    def test_long_text(self):
+        long_text = "a" * 10000  # 10,000 characters
+        node = TextNode(long_text, TextType.TEXT)
+        self.assertEqual(node.text, long_text)
+
+    def test_comparison_with_non_textnode(self):
+        node = TextNode("Sample text", TextType.BOLD)
+        self.assertNotEqual(node, "Not a TextNode")
+
+    def test_case_sensitivity(self):
+        node1 = TextNode("Sample Text", TextType.TEXT)
+        node2 = TextNode("sample text", TextType.TEXT)
+        self.assertNotEqual(node1, node2)
 
 
 if __name__ == "__main__":
